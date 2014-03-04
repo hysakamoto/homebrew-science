@@ -5,21 +5,24 @@ require "formula"
 # PLEASE REMOVE ALL GENERATED COMMENTS BEFORE SUBMITTING YOUR PULL REQUEST!
 
 class Ess < Formula
-  homepage ""
-  url "http://ess.r-project.org/downloads/ess/ess-13.09-1.zip"
-  sha1 "afcf64e7d18ca8a5e49e01e694ab74b9efab746f"
+  homepage 'http://ess.r-project.org/'
+  url 'http://ess.r-project.org/downloads/ess/ess-13.09-1.zip'
+  sha1 'afcf64e7d18ca8a5e49e01e694ab74b9efab746f'
+  head 'https://github.com/emacs-ess/ESS.git'
 
   # depends_on "cmake" => :build
-  depends_on :x11 # if your formula requires any X11/XQuartz components
+  depends_on 'r' => :build
 
   def install
     # ENV.deparallelize  # if your formula fails when building in parallel
 
-    # Remove unrecognized options if warned by configure
-    system "./configure", "--disable-debug",
-                          "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--prefix=#{prefix}"
+    inreplace 'Makeconf', 'DESTDIR=/usr', '#{prefix}/ess'
+
+    # # Remove unrecognized options if warned by configure
+    # system "./configure", "--disable-debug",
+    #                       "--disable-dependency-tracking",
+    #                       "--disable-silent-rules",
+    #                       "--prefix=#{prefix}"
     # system "cmake", ".", *std_cmake_args
     system "make", "install" # if this fails, try separate make/make install steps
   end
@@ -35,4 +38,7 @@ class Ess < Formula
     # executables being tested: `system "#{bin}/program", "do", "something"`.
     system "false"
   end
+  ohai 'Please add #{prefix} to your emacs load path and then load ESS with the following lines in your init file.'
+  ohai '(add-to-list \'load-path \"/path/to/ESS/lisp/\")\n(load \"ess-site\")'
+
 end

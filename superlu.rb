@@ -1,7 +1,7 @@
 require "formula"
 
 class Superlu < Formula
-  homepage ""
+  homepage "http://crd-legacy.lbl.gov/~xiaoye/SuperLU/"
   url "http://crd-legacy.lbl.gov/~xiaoye/SuperLU/superlu_4.3.tar.gz"
   sha1 "d2863610d8c545d250ffd020b8e74dc667d7cbdd"
 

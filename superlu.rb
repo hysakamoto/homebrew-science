@@ -34,11 +34,11 @@ class Superlu < Formula
     cp_r "#{prefix}/EXAMPLE", testpath
     cp "#{prefix}/make.inc", testpath
     cd "#{testpath}/TESTING" 
-    ohai testpath
     ENV.deparallelize
     system "make double complex16"
     assert File.exist?("dtest.out") and File.exist?("ztest.out")
     assert (not File.read("dtest.out").include?("fail"))
+    assert (not File.read("ztest.out").include?("fail"))
   end
 
 end

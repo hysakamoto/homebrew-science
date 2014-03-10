@@ -22,29 +22,29 @@ class Superlu < Formula
         s.gsub! "$(SuperLUroot)/lib/libblas.a", "-framework Accelerate -lcolamd"
       end
     end
-    
+
     # resolve a conflict with suite-sparse formula
-    inreplace 'SRC/Makefile' do |s|
-      s.gsub! "colamd.o", ""
-    end
-    rm "#{buildpath}/SRC/colamd.h"
+    # inreplace 'SRC/Makefile' do |s|
+    #   s.gsub! "colamd.o", ""
+    # end
 
     system "make lib"
+    rm "#{buildpath}/SRC/colamd.h"
     inreplace 'make.inc', buildpath, prefix
-    prefix.install ["make.inc"]
-    lib.install Dir["lib/*"]    
+    prefix.install "make.inc"
+    lib.install Dir["lib/*"]
     include.install Dir["SRC/*.h"]
     doc.install Dir["Doc/*"]
-    prefix.install Dir["EXAMPLE"]
-    prefix.install Dir["TESTING"]
-    
+    prefix.install "EXAMPLE"
+    prefix.install "TESTING"
+
   end
 
   test do
     cp_r "#{prefix}/TESTING", testpath
     cp_r "#{prefix}/EXAMPLE", testpath
     cp "#{prefix}/make.inc", testpath
-    cd "#{testpath}/TESTING" 
+    cd "#{testpath}/TESTING"
     ENV.deparallelize
     system "make double complex16"
     assert File.exist?("dtest.out") and File.exist?("ztest.out")

@@ -7,7 +7,7 @@ class Superlu < Formula
 
   depends_on :fortran
   depends_on 'openblas' => :optional
-  depends_on 'suite-sparse' => :build
+  depends_on 'colamd' => :build
 
   def install
     ENV.deparallelize

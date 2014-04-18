@@ -31,9 +31,9 @@ class CudaRequirement < Requirement
 end
 
 class Beagle < Formula
-  homepage 'http://beagle-lib.googlecode.com/'
-  url 'http://beagle-lib.googlecode.com/svn/tags/beagle_release_2_1/'
-  head 'http://beagle-lib.googlecode.com/svn/trunk/'
+  homepage 'https://beagle-lib.googlecode.com/'
+  url 'https://beagle-lib.googlecode.com/svn/tags/beagle_release_2_1/'
+  head 'https://beagle-lib.googlecode.com/svn/trunk/'
 
   option 'with-opencl', "Build with OpenCL GPU/CPU acceleration"
 
@@ -61,6 +61,6 @@ class Beagle < Formula
     system "make"
     system "make install"
     # The tests seem to fail if --enable-opencl is provided
-    system "make check" unless build.with? 'opencl'
+    system "make check" if build.without? "opencl"
   end
 end

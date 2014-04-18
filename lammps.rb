@@ -83,6 +83,10 @@ class Lammps < Formula
     end
   end
 
+  def pyver
+    IO.popen("python -c 'import sys; print sys.version[:3]'").read.strip
+  end
+
   def install
     ENV.j1      # not parallel safe (some packages have race conditions :meam:)
 
@@ -153,7 +157,7 @@ class Lammps < Formula
         system "make", "yes-" + pkg if build.include? "enable-" + pkg
       end
 
-      unless build.with? :mpi
+      if build.without? :mpi
         # build fake mpi library
         cd "STUBS" do
           system "make"
@@ -224,9 +228,9 @@ class Lammps < Formula
       Additional tools (may require manual installation):
       #{HOMEBREW_PREFIX}/share/lammps/tools
 
-    To use the Python module with non-homebrew Python, you need to amend your
+    To use the Python module with Python, you need to amend your
     PYTHONPATH like so:
-      export PYTHONPATH=#{HOMEBREW_PREFIX}/lib/python2.7/site-packages:$PYTHONPATH
+      export PYTHONPATH=#{HOMEBREW_PREFIX}/lib/python#{pyver}/site-packages:$PYTHONPATH
 
     EOS
   end

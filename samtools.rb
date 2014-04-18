@@ -19,12 +19,12 @@ class Samtools < Formula
 
   resource 'dwgsim' do
     # http://sourceforge.net/apps/mediawiki/dnaa/index.php?title=Whole_Genome_Simulation
-    url 'https://downloads.sourceforge.net/project/dnaa/dwgsim/dwgsim-0.1.10.tar.gz'
-    sha1 'f3127e84d54cdc52c9b5c988585358f69b4bb675'
+    url 'https://downloads.sourceforge.net/project/dnaa/dwgsim/dwgsim-0.1.11.tar.gz'
+    sha1 'e0275122618fa38dae815d2b43c4da87614c67dd'
   end
 
   def install
-    if build.devel?
+    if build.devel? || build.head?
       inreplace 'Makefile', 'include $(HTSDIR)/htslib.mk', ''
       htslib = Formula["Htslib"].opt_prefix
       system 'make', "HTSDIR=#{htslib}/include", "HTSLIB=#{htslib}/lib/libhts.a"
@@ -35,19 +35,19 @@ class Samtools < Formula
       system 'make', '-C', 'bcftools' if build.with? 'bcftools'
     end
 
-    if build.include? 'with-dwgsim'
+    if build.with? 'dwgsim'
       ohai "Building dwgsim"
       samtools = pwd
       resource('dwgsim').stage do
         system "ln -s #{samtools} samtools"
-        system "make"
+        system "make", "CC=#{ENV.cc}"
         bin.install %w{dwgsim dwgsim_eval}
       end
     end
 
     bin.install %w{samtools razip}
-    bin.install 'bcftools/bcftools' unless build.devel? || build.without?('bcftools')
-    bin.install 'bcftools/vcfutils.pl' unless build.devel?
+    bin.install 'bcftools/bcftools' unless build.devel? || build.head? || build.without?('bcftools')
+    bin.install 'bcftools/vcfutils.pl' unless build.devel? || build.head?
     bin.install %w{misc/maq2sam-long misc/maq2sam-short misc/md5fa misc/md5sum-lite misc/wgsim}
     bin.install Dir['misc/*.pl']
     lib.install 'libbam.a'

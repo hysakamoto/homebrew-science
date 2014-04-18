@@ -14,7 +14,7 @@ class EnblendEnfuse < Formula
   depends_on 'jpeg'
   depends_on 'little-cms2'
   depends_on 'libtiff'
-  depends_on 'homebrew/science/vigra'
+  depends_on 'vigra'
   depends_on 'openexr' => :optional
 
   def patches
@@ -28,7 +28,7 @@ class EnblendEnfuse < Formula
              "--disable-dependency-tracking",
              "--prefix=#{prefix}" ]
 
-    args << "--without-x" unless build.with? 'x11'
+    args << "--without-x" if build.without? 'x11'
 
     if build.include? 'disable-gpu'
       enable_gpu = "no"

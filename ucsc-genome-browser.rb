@@ -2,8 +2,8 @@ require 'formula'
 
 class UcscGenomeBrowser < Formula
   homepage 'http://genome.ucsc.edu'
-  url 'http://hgdownload.cse.ucsc.edu/admin/jksrc.v295.zip'
-  sha1 'f3853d4aab5c67dfd6a64bfd869261812fab1b19'
+  url 'http://hgdownload.cse.ucsc.edu/admin/jksrc.v298.zip'
+  sha1 'ba46b7411949524fa586d051ff6a472e6cc20ce9'
   head 'git://genome-source.cse.ucsc.edu/kent.git'
 
   keg_only <<-EOF.undent
@@ -15,9 +15,6 @@ class UcscGenomeBrowser < Formula
   depends_on :mysql
 
   def install
-    # Patch for OSX cp, fixed in HEAD
-    inreplace "src/hg/js/makefile", "cp -p --update", "rsync -a" unless build.head?
-
     ENV.j1
     machtype = `uname -m`.chomp
     user = `whoami`.chomp
@@ -33,12 +30,12 @@ class UcscGenomeBrowser < Formula
       system 'make',
         "MACHTYPE=#{machtype}",
         "BINDIR=#{bin}",
-        "SCRIPTS=#{bin}/scripts",
+        "SCRIPTS=#{prefix}/scripts",
         "CGI_BIN=#{prefix}/cgi-bin",
         "DOCUMENTROOT=#{prefix}/htdocs",
-        "PNGLIB=-L#{HOMEBREW_PREFIX}/lib -lpng",
+        "PNGLIB=-L#{Formula["libpng"].opt_lib} -lpng",
         "MYSQLLIBS=-lmysqlclient -lz",
-        "MYSQLINC=#{HOMEBREW_PREFIX}/include/mysql"
+        "MYSQLINC=#{Formula["mysql"].opt_include}/mysql"
     end
     mv "#{prefix}/cgi-bin-#{user}", prefix/'cgi-bin'
     mv "#{prefix}/htdocs-#{user}", prefix/'htdocs'

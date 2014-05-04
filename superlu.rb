@@ -7,7 +7,6 @@ class Superlu < Formula
 
   depends_on :fortran
   depends_on 'openblas' => :optional
-  depends_on 'colamd' => :build
 
   def install
     ENV.deparallelize
@@ -17,23 +16,17 @@ class Superlu < Formula
       s.gsub! "$(HOME)/Codes/SuperLU_4.3", buildpath
       s.gsub! "ranlib", "echo"
       if build.with? 'openblas'
-        s.gsub! "$(SuperLUroot)/lib/libblas.a", "-L#{Formula["openblas"].lib} -lopenblas -lcolamd"
+        s.gsub! "$(SuperLUroot)/lib/libblas.a", "-L#{Formula["openblas"].lib} -lopenblas"
       else
-        s.gsub! "$(SuperLUroot)/lib/libblas.a", "-framework Accelerate -lcolamd"
+        s.gsub! "$(SuperLUroot)/lib/libblas.a", "-framework Accelerate"
       end
     end
 
-    # resolve a conflict with suite-sparse formula
-    # inreplace 'SRC/Makefile' do |s|
-    #   s.gsub! "colamd.o", ""
-    # end
-
     system "make lib"
-    rm "#{buildpath}/SRC/colamd.h"
     inreplace 'make.inc', buildpath, prefix
     prefix.install "make.inc"
     lib.install Dir["lib/*"]
-    include.install Dir["SRC/*.h"]
+    (include+'superlu').install Dir["SRC/*.h"]
     doc.install Dir["Doc/*"]
     prefix.install "EXAMPLE"
     prefix.install "TESTING"
@@ -45,8 +38,10 @@ class Superlu < Formula
     cp_r "#{prefix}/EXAMPLE", testpath
     cp "#{prefix}/make.inc", testpath
     cd "#{testpath}/TESTING"
+    inreplace 'Makefile', '../SRC', (Formula['superlu'].include)+'superlu'
+
     ENV.deparallelize
-    system "make double complex16"
+    system "make"
     assert File.exist?("dtest.out") and File.exist?("ztest.out")
     assert (not File.read("dtest.out").include?("fail"))
     assert (not File.read("ztest.out").include?("fail"))

@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'formula'
 
 class Petsc < Formula
@@ -12,12 +13,34 @@ class Petsc < Formula
   depends_on :fortran
   depends_on :x11 => :optional
 
+  depends_on :mumps => :optional
+  depends_on :metis => :optional
+  depends_on :parmetis => :optional
+  depends_on :scotch => :optional
+  depends_on :scalapack => :optional
+  depends_on :'suite-sparse' => :optional
+
+  depends_on :hypre => :optional
+  depends_on :blacs => :optional
+  depends_on :superlu_dist => :optional
+  depends_on :ml => :optional
+  
   def install
     ENV.deparallelize
 
     petsc_arch = 'arch-darwin-c-opt'
     args = ["--with-debugging=0", "--with-shared-libraries=1", "--prefix=#{prefix}/#{petsc_arch}"]
     args << "--with-x=0" if build.without? 'x11'
+    args << "—-with-mumps-dir=#{prefix}" if build.with? "mumps"
+    args << "—-with-metis-dir=#{prefix}" if build.with? "metis"
+    args << "—-with-parmetis-dir=#{prefix}" if build.with? "parmetis"
+    args << "—-with-scalapack-dir=#{prefix}" if build.with? "scalapack"
+    args << "—-with-umfpack-dir=#{prefix}" if build.with? "umfpack"
+    args << "—-download-hypre=1" if build.with? "hypre"
+    args << "—-download-blacs=1" if build.with? "blacs"
+    args << "—-download-superlu_dist=1" if build.with? "superlu_dist"
+    args << "—-download-ml=1" if build.with? "ml"
+    
     ENV['PETSC_DIR'] = Dir.getwd  # configure fails if those vars are set differently.
     ENV['PETSC_ARCH'] = petsc_arch
     system "./configure", *args
